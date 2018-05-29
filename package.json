@@ -20,7 +20,6 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "flag-icon-css": "^3.0.0",
     "font-awesome": "^4.7.0",
-    "jquery": "^1.9.1",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-chartjs-2": "^2.7.2",
@@ -30,7 +29,9 @@
     "react-router-dom": "^4.2.2",
     "react-test-renderer": "^16.3.2",
     "reactstrap": "^6.0.1",
-    "simple-line-icons": "^2.4.1"
+    "simple-line-icons": "^2.4.1",
+    "jquery": "^3.0.0",
+    "hoek": "4.2.1"
   },
   "devDependencies": {
     "babel-jest": "^22.4.4",
@@ -40,7 +41,7 @@
   },
   "scripts": {
     "build-css": "node-sass-chokidar --include-path ./node_modules ./src/scss -o ./src/scss",
-    "watch-css": "npm run build-css && node-sass-chokidar --include-path ./node_modules ./src/scss -o ./src/scss --watch --recursive",
+    "watch-css": "npm run build-css node-sass-chokidar --include-path ./node_modules ./src/scss -o ./src/scss --watch --recursive",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-scripts build",
