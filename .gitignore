@@ -1,0 +1,11 @@
+# Dependency directory
+node_modules
+
+# config file
+.env
+
+# test db
+dev.sqlite3
+
+#VS Code folder
+.vscode
