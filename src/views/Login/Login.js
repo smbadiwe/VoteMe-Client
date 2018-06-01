@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Alert,
   Button,
   Card,
   CardBody,
@@ -25,7 +26,8 @@ class Login extends BaseComponent {
       password: "",
       rememberme: false,
       redirect: false,
-      errormessage: ''
+      errormessage: "",
+      alertVisible: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -43,7 +45,7 @@ class Login extends BaseComponent {
     if (result.status) {
       this.setState({ redirect: true });
     } else {
-      this.setState({ errormessage: result.message });
+      this.setState({ errormessage: result.message, alertVisible: true });
     }
   }
 
@@ -60,7 +62,10 @@ class Login extends BaseComponent {
                 <Card className="p-4">
                   <CardBody>
                     <h1>Login</h1>
-                    <p className="text-muted">{this.state.errormessage}</p>
+
+                    <Alert color="danger" isOpen={this.state.alertVisible}>
+                      {this.state.errormessage}
+                    </Alert>
                     <p className="text-muted">Sign In to your account</p>
                     <InputGroup className="mb-3">
                       <InputGroupAddon addonType="prepend">
@@ -104,18 +109,19 @@ class Login extends BaseComponent {
                     </label>
                     <Row>
                       <Col xs="6">
-                        <Button
-                          color="primary"
-                          className="px-4"
-                          onClick={this.handleSubmit}
-                        >
+                        <Button color="primary" className="px-4" onClick={this.handleSubmit}>
                           Login
                         </Button>
                       </Col>
                       <Col xs="6" className="text-right">
-                        <Button color="link" className="px-0">
+                        <Link
+                          to={"/resetpassword"}
+                          color="primary"
+                          className="px-0"
+                          active="active"
+                        >
                           Forgot password?
-                        </Button>
+                        </Link>
                       </Col>
                     </Row>
                   </CardBody>
@@ -128,17 +134,10 @@ class Login extends BaseComponent {
                     <div>
                       <h2>Sign up</h2>
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                        elit, sed do eiusmod tempor incididunt ut labore et
-                        dolore magna aliqua.
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua.
                       </p>
-                      {/* <Button color="primary" className="mt-3" active>Register Now!</Button> */}
-                      <Link
-                        to={"/register"}
-                        color="primary"
-                        className="mt-3"
-                        active="active"
-                      >
+                      <Link to={"/register"} color="primary" className="mt-3" active="active">
                         Register Now!
                       </Link>
                     </div>

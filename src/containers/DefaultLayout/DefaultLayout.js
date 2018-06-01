@@ -21,6 +21,7 @@ import routes from "../../routes";
 import DefaultAside from "./DefaultAside";
 import DefaultFooter from "./DefaultFooter";
 import DefaultHeader from "./DefaultHeader";
+import { ErrorBoundary } from "../../views/common";
 
 class DefaultLayout extends Component {
   render() {
@@ -39,22 +40,24 @@ class DefaultLayout extends Component {
           </AppSidebar>
           <main className="main">
             <AppBreadcrumb appRoutes={routes} />
-            <Container fluid>
-              <Switch>
-                {routes.map((route, idx) => {
-                  return route.component ? (
-                    <Route
-                      key={idx}
-                      path={route.path}
-                      exact={route.exact}
-                      name={route.name}
-                      render={props => <route.component {...props} />}
-                    />
-                  ) : null;
-                })}
-                <Redirect from="/" to="/dashboard" />
-              </Switch>
-            </Container>
+            <ErrorBoundary>
+              <Container fluid>
+                <Switch>
+                  {routes.map((route, idx) => {
+                    return route.component ? (
+                      <Route
+                        key={idx}
+                        path={route.path}
+                        exact={route.exact}
+                        name={route.name}
+                        render={props => <route.component {...props} />}
+                      />
+                    ) : null;
+                  })}
+                  <Redirect from="/" to="/dashboard" />
+                </Switch>
+              </Container>
+            </ErrorBoundary>
           </main>
           <AppAside fixed hidden>
             <DefaultAside />
