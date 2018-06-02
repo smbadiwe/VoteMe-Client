@@ -76,6 +76,7 @@ class Login extends BaseComponent {
                       <Input
                         type="text"
                         placeholder="Username"
+                        required
                         name="username"
                         onChange={this.handleInputChange}
                       />
@@ -137,7 +138,7 @@ class Login extends BaseComponent {
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                         tempor incididunt ut labore et dolore magna aliqua.
                       </p>
-                      <Link to={"/register"} color="primary" className="mt-3" active="active">
+                      <Link to="/register" color="primary" className="mt-3" active="active">
                         Register Now!
                       </Link>
                     </div>

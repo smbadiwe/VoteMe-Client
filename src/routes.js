@@ -11,6 +11,11 @@ const Dashboard = Loadable({
   loading: Loading
 });
 
+const ChangePassword = Loadable({
+  loader: () => import("./views/ChangePassword"),
+  loading: Loading
+});
+
 const ResetPassword = Loadable({
   loader: () => import("./views/ResetPassword"),
   loading: Loading
@@ -31,6 +36,7 @@ const routes = [
   { path: "/", exact: true, name: "Home", component: DefaultLayout },
   { path: "/dashboard", name: "Dashboard", component: Dashboard },
   { path: "/register", name: "Register", component: Register },
+  { path: "/changepassword/:email?", name: "ChangePassword", component: ChangePassword },
   { path: "/resetpassword", name: "ResetPassword", component: ResetPassword },
   { path: "/resetpassword2/:token", name: "ResetPassword2", component: ResetPassword2 }
 ];

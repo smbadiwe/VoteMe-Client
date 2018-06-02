@@ -1,0 +1,6 @@
+{
+    "name": "InputErrorInfo",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./InputErrorInfo.js"
+}

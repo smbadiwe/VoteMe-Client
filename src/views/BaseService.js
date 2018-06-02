@@ -16,6 +16,7 @@ export default class BaseService {
   }
 
   apiError(msg) {
+    if (!msg) msg = "Falure authenticating. Please try again later.";
     return {
       status: false,
       message: msg

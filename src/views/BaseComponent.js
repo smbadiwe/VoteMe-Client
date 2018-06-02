@@ -1,8 +1,8 @@
 import { Component } from "react";
 
 export default class BaseComponent extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
@@ -11,8 +11,6 @@ export default class BaseComponent extends Component {
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    });
+    this.setState({ [name]: value });
   }
 }
