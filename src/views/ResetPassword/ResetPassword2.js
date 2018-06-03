@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ResetPasswordService from "./ResetPassword.service";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 class ResetPassword2 extends Component {
   render() {

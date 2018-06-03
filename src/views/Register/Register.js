@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import BaseComponent from "../BaseComponent";
 import validator from "validator";
 import { InputErrorInfo } from "../common";
+import { isValid } from "../common/utils";
 import {
   Button,
   Card,
@@ -73,17 +73,7 @@ class Register extends Component {
         errors.password2 += "Repeat password does not match with the password entered. ";
     }
 
-    this.setState({ errors: errors });
-    if (doAll) {
-      for (const i in errors) {
-        if (errors[i].length > 0) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    return errors[field].length === 0;
+    return isValid(this, errors, doAll, field);
   }
 
   render() {

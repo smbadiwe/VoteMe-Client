@@ -1,4 +1,4 @@
-import { callApi } from "../common/utils";
+import { callApi, apiError } from "../common/utils";
 
 export default class ResetPasswordService {
   async resetPassword(token) {

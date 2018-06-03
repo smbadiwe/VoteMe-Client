@@ -1,0 +1,6 @@
+{
+    "name": "Privileges",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./Privileges.js"
+}

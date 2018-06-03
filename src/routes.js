@@ -31,6 +31,11 @@ const Register = Loadable({
   loading: Loading
 });
 
+const Privileges = Loadable({
+  loader: () => import("./views/Admin/Privileges"),
+  loading: Loading
+});
+
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: "/", exact: true, name: "Home", component: DefaultLayout },
@@ -38,7 +43,9 @@ const routes = [
   { path: "/register", name: "Register", component: Register },
   { path: "/changepassword/:email?", name: "ChangePassword", component: ChangePassword },
   { path: "/resetpassword", name: "ResetPassword", component: ResetPassword },
-  { path: "/resetpassword2/:token", name: "ResetPassword2", component: ResetPassword2 }
+  { path: "/resetpassword2/:token", name: "ResetPassword2", component: ResetPassword2 },
+
+  { path: "/admin/privileges", name: "Privileges", component: Privileges }
 ];
 
 export default routes;

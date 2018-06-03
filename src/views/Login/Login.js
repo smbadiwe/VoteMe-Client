@@ -26,8 +26,8 @@ class Login extends BaseComponent {
       password: "",
       rememberme: false,
       redirect: false,
-      errormessage: "",
-      alertVisible: false
+      apiError: "",
+      showApiError: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -45,7 +45,7 @@ class Login extends BaseComponent {
     if (result.status) {
       this.setState({ redirect: true });
     } else {
-      this.setState({ errormessage: result.message, alertVisible: true });
+      this.setState({ apiError: result.message, showApiError: true });
     }
   }
 
@@ -63,8 +63,8 @@ class Login extends BaseComponent {
                   <CardBody>
                     <h1>Login</h1>
 
-                    <Alert color="danger" isOpen={this.state.alertVisible}>
-                      {this.state.errormessage}
+                    <Alert color="danger" isOpen={this.state.showApiError}>
+                      {this.state.apiError}
                     </Alert>
                     <p className="text-muted">Sign In to your account</p>
                     <InputGroup className="mb-3">

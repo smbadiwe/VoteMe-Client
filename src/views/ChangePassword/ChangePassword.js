@@ -16,8 +16,8 @@ import {
 } from "reactstrap";
 
 class ChangePassword extends BaseComponent {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       password: "",
       password2: "",
@@ -25,7 +25,6 @@ class ChangePassword extends BaseComponent {
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    console.log(this.state);
   }
 
   handleSubmit(event) {
