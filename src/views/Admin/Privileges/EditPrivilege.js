@@ -1,4 +1,3 @@
-import PrivilegeService from "./Privileges.service";
 import React, { Component } from "react";
 import { isObjectEmpty } from "../../common/utils";
 import { InputErrorInfo } from "../../common";
@@ -34,11 +33,11 @@ export default class EditPrivilege extends Component {
   }
 
   render() {
-    if (isObjectEmpty(this.props.record)) {
+    if (isObjectEmpty(this.props.editRecord)) {
       return null;
     }
 
-    const nameErrorMsg = this.props.record.errors.name;
+    const nameErrorMsg = this.props.editRecord.errors.name;
     return (
       <Modal
         isOpen={this.props.isOpen}
@@ -47,8 +46,8 @@ export default class EditPrivilege extends Component {
       >
         <ModalHeader toggle={this.props.toggle}>Edit Privilege</ModalHeader>
 
-        <Alert color="danger" isOpen={this.props.record.showApiError}>
-          {this.props.record.apiError}
+        <Alert color="danger" isOpen={this.props.editRecord.showApiError}>
+          {this.props.editRecord.apiError}
         </Alert>
         <ModalBody>
           <InputGroup className="mb-3">
@@ -56,7 +55,7 @@ export default class EditPrivilege extends Component {
               type="text"
               placeholder="Name"
               name="name"
-              value={this.props.record.name}
+              value={this.props.editRecord.name}
               onChange={this.handleInputChange}
             />
             <InputErrorInfo

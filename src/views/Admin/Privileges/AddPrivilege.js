@@ -8,13 +8,10 @@ import {
   Button,
   Input,
   InputGroup,
-  InputGroupAddon,
-  InputGroupText,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader,
-  Row
+  ModalHeader
 } from "reactstrap";
 
 export default class AddPrivilege extends Component {

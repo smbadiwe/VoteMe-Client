@@ -1,0 +1,6 @@
+{
+    "name": "GridPaging",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./GridPaging.js"
+}

@@ -5,6 +5,10 @@ import React from "react";
 import BaseComponent from "../../BaseComponent";
 import validator from "validator";
 import { isValid } from "../../common/utils";
+import { GridPaging } from "../../common";
+import queryString from "query-string";
+import { Redirect } from "react-router-dom";
+
 import {
   Alert,
   Button,
@@ -24,125 +28,51 @@ import {
 export default class Privileges extends BaseComponent {
   constructor(props) {
     super(props);
+    const parsed = queryString.parse(this.props.location.search);
     this.state = {
-      page: 0,
-      pageSize: 10,
-      recordId: 0,
-      record: {},
-      showApiError: false,
+      // grid: search and result
+      searchParams: {
+        pageIndex: parsed.pageIndex || 0,
+        pageSize: parsed.pageSize || 10
+      },
+      dataResult: { data: [], totalCount: 0 },
       apiError: "",
-      modal: false,
-      editModal: false
+      showApiError: false,
+
+      // edit
+      editRecordId: 0,
+      editRecord: {},
+      editModal: false,
+
+      // add
+      modal: false
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggle = this.toggle.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     this.handleInputChangeForEditModal = this.handleInputChangeForEditModal.bind(this);
+    this.onPageNavClick = this.onPageNavClick.bind(this);
   }
 
-  handleInputChangeForEditModal(field, value) {
-    const record = this.state.record;
-    record[field] = value;
-    this.setState({ record: record });
-    this.validateFieldsForEditModal(field);
+  onPageNavClick(pageIndex) {
+    const searchParams = this.state.searchParams;
+    searchParams.pageIndex = pageIndex;
+    this.setState({ searchParams: searchParams }, () => {
+      this.fetchGridData();
+    });
   }
 
-  validateFieldsForEditModal(field) {
-    const errors = this.state.record.errors;
-    let doAll = !field || field === "*";
-
-    if (doAll || field === "name") {
-      const name = this.state.record.name;
-      errors.name = "";
-      if (validator.isEmpty(name)) errors.name += "Name is required. ";
-    }
-    return isValid(this, errors, doAll, field);
+  componentDidMount() {
+    this.fetchGridData();
   }
 
-  async handleSubmitForEditModal() {
-    const isValid = this.validateFieldsForEditModal();
-    if (isValid) {
-      const result = await new PrivilegeService().add(this.state.record.name);
-      const record = this.state.record;
-      if (result.status) {
-        record.apiError = "";
-        record.showApiError = false;
-        this.setState(prevState => ({
-          editModal: !prevState.editModal
-        }));
-      } else {
-        record.apiError = result.message;
-        record.showApiError = true;
-      }
-      this.setState({ record: record });
-    }
-  }
-
-  toggleEdit(recordId) {
-    if (recordId <= 0 || this.state.recordId === recordId) {
-      this.setState(prevState => ({
-        editModal: !prevState.editModal
-      }));
-    } else {
-      new PrivilegeService()
-        .getById(recordId)
-        .then(res => {
-          if (res.status) {
-            const recordToEdit = res.data;
-            recordToEdit.errors = { name: "" };
-            recordToEdit.showApiError = false;
-            recordToEdit.apiError = "";
-            this.setState(prevState => ({
-              editModal: !prevState.editModal,
-              recordId: recordId,
-              record: recordToEdit
-            }));
-          } else {
-            this.setState({
-              apiError: res.message,
-              showApiError: true
-            });
-          }
-        })
-        .catch(err => {
-          this.setState({
-            apiError: err.message,
-            showApiError: true
-          });
-        });
-    }
-  }
-
-  toggle() {
-    this.setState({ modal: !this.state.modal });
-  }
-
-  handleSubmit(event) {
-    event.preventDefault();
-
-    this.setState({ redirect: true });
-  }
-
-  getData() {
-    return [
-      { id: 121, name: "Soma" },
-      { id: 122, name: "Soma2" },
-      { id: 123, name: "Soma3" },
-      { id: 124, name: "Soma4" },
-      { id: 125, name: "Soma5" },
-      { id: 122, name: "Soma2" },
-      { id: 123, name: "Soma3" },
-      { id: 124, name: "Soma4" },
-      { id: 125, name: "Soma5" },
-      { id: 125, name: "Soma5" }
-    ];
-  }
   render() {
-    const data = this.getData();
-    const rows = data.map((item, index) => {
+    const rows = this.state.dataResult.data.map((item, index) => {
       return (
         <tr key={index}>
-          <td>{index + 1}</td>
+          <td>
+            {index + 1 + this.state.searchParams.pageIndex * this.state.searchParams.pageSize}
+          </td>
           <td>{item.id}</td>
           <td>
             <a href="javascript:void();" onClick={() => this.toggleEdit(item.id)}>
@@ -170,8 +100,8 @@ export default class Privileges extends BaseComponent {
                 <AddPrivilege isOpen={this.state.modal} toggle={this.toggle} />
                 <EditPrivilege
                   isOpen={this.state.editModal}
-                  toggle={() => this.toggleEdit(this.state.recordId)}
-                  record={this.state.record}
+                  toggle={() => this.toggleEdit(this.state.editRecordId)}
+                  editRecord={this.state.editRecord}
                   onSubmit={async () => await this.handleSubmitForEditModal()}
                   onInputChange={this.handleInputChangeForEditModal}
                 />
@@ -185,11 +115,108 @@ export default class Privileges extends BaseComponent {
                   </thead>
                   <tbody>{rows}</tbody>
                 </Table>
+                <GridPaging
+                  onPageNavClick={this.onPageNavClick}
+                  totalCount={this.state.dataResult.totalCount}
+                  pageIndex={this.state.searchParams.pageIndex}
+                  pageSize={this.state.searchParams.pageSize}
+                />
               </CardBody>
             </Card>
           </Col>
         </Row>
       </div>
     );
+  }
+
+  fetchGridData() {
+    new PrivilegeService()
+      .search(this.state.searchParams.pageIndex, this.state.searchParams.pageSize)
+      .then(res => {
+        this.setState({ dataResult: res });
+      });
+  }
+
+  handleInputChangeForEditModal(field, value) {
+    const editRecord = this.state.editRecord;
+    editRecord[field] = value;
+    this.setState({ editRecord: editRecord });
+    this.validateFieldsForEditModal(field);
+  }
+
+  validateFieldsForEditModal(field) {
+    const errors = this.state.editRecord.errors;
+    let doAll = !field || field === "*";
+
+    if (doAll || field === "name") {
+      const name = this.state.editRecord.name;
+      errors.name = "";
+      if (validator.isEmpty(name)) errors.name += "Name is required. ";
+    }
+    return isValid(this, errors, doAll, field);
+  }
+
+  async handleSubmitForEditModal() {
+    const isValid = this.validateFieldsForEditModal();
+    if (isValid) {
+      const result = await new PrivilegeService().add(this.state.editRecord.name);
+      const editRecord = this.state.editRecord;
+      if (result.status) {
+        editRecord.apiError = "";
+        editRecord.showApiError = false;
+        this.setState(prevState => ({
+          editModal: !prevState.editModal
+        }));
+      } else {
+        editRecord.apiError = result.message;
+        editRecord.showApiError = true;
+      }
+      this.setState({ editRecord: editRecord });
+    }
+  }
+
+  toggleEdit(editRecordId) {
+    if (editRecordId <= 0 || this.state.editRecordId === editRecordId) {
+      this.setState(prevState => ({
+        editModal: !prevState.editModal
+      }));
+    } else {
+      new PrivilegeService()
+        .getById(editRecordId)
+        .then(res => {
+          if (res.status) {
+            const editRecordToEdit = res.data;
+            editRecordToEdit.errors = { name: "" };
+            editRecordToEdit.showApiError = false;
+            editRecordToEdit.apiError = "";
+            this.setState(prevState => ({
+              editModal: !prevState.editModal,
+              editRecordId: editRecordId,
+              editRecord: editRecordToEdit
+            }));
+          } else {
+            this.setState({
+              apiError: res.message,
+              showApiError: true
+            });
+          }
+        })
+        .catch(err => {
+          this.setState({
+            apiError: err.message,
+            showApiError: true
+          });
+        });
+    }
+  }
+
+  toggle() {
+    this.setState({ modal: !this.state.modal });
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+
+    this.setState({ redirect: true });
   }
 }
