@@ -1,4 +1,4 @@
-import { callApi } from "../../common/utils";
+import { callApi, apiSuccess } from "../../common/utils";
 
 export default class PrivilegeService {
   async search(pageIndex = 0, pageSize = 10) {
@@ -30,13 +30,12 @@ export default class PrivilegeService {
 
     const start = pageIndex * pageSize;
     const end = start + +pageSize;
-    return { data: dbData.slice(start, end), totalCount: dbData.length };
+    return apiSuccess({ data: { data: dbData.slice(start, end), totalCount: dbData.length } });
   }
 
   async getById(id) {
-    const getData = {};
     const endpoint = "/admin/privileges/" + id;
-    return await callApi(getData, endpoint, false);
+    return await callApi(null, endpoint, false);
   }
 
   async add(name) {

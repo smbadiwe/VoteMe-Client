@@ -36,6 +36,26 @@ const Privileges = Loadable({
   loading: Loading
 });
 
+const Users = Loadable({
+  loader: () => import("./views/Admin/Users"),
+  loading: Loading
+});
+
+const AddEditUser = Loadable({
+  loader: () => import("./views/Admin/Users/AddEditUser"),
+  loading: Loading
+});
+
+const UserRoles = Loadable({
+  loader: () => import("./views/Admin/UserRoles"),
+  loading: Loading
+});
+
+const AddEditUserRole = Loadable({
+  loader: () => import("./views/Admin/UserRoles/AddEditUserRole"),
+  loading: Loading
+});
+
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: "/", exact: true, name: "Home", component: DefaultLayout },
@@ -45,7 +65,11 @@ const routes = [
   { path: "/resetpassword", name: "ResetPassword", component: ResetPassword },
   { path: "/resetpassword2/:token", name: "ResetPassword2", component: ResetPassword2 },
 
-  { path: "/admin/privileges", name: "Privileges", component: Privileges }
+  { path: "/admin/privileges", name: "Privileges", component: Privileges },
+  { path: "/admin/users", name: "Users", component: Users },
+  { path: "/admin/users/addedit/:id?", name: "AddEditUser", component: AddEditUser },
+  { path: "/admin/userroles", name: "UserRoles", component: UserRoles },
+  { path: "/admin/userroles/addedit/:id?", name: "AddEditUserRole", component: AddEditUserRole }
 ];
 
 export default routes;

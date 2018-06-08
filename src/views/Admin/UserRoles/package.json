@@ -1,0 +1,6 @@
+{
+    "name": "UserRoles",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./UserRoles.js"
+}

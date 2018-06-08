@@ -2,7 +2,6 @@
   "name": "VoteMe-Client",
   "version": "1.0.0",
   "description": "React-based client-side code for the VoteMe idea app",
-  "main": "index.js",
   "keywords": [],
   "author": "Soma Mbadiwe",
   "license": "ISC",
@@ -43,12 +42,14 @@
   },
   "scripts": {
     "build-css": "node-sass-chokidar --include-path ./node_modules ./src/scss -o ./src/scss",
-    "watch-css": "npm run build-css node-sass-chokidar --include-path ./node_modules ./src/scss -o ./src/scss --watch --recursive",
+    "watch-css":
+      "npm run build-css node-sass-chokidar --include-path ./node_modules ./src/scss -o ./src/scss --watch --recursive",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "create-model": "node ./devtools/create-model"
   }
 }

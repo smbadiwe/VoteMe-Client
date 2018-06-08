@@ -32,8 +32,8 @@ export default class Privileges extends BaseComponent {
     this.state = {
       // grid: search and result
       searchParams: {
-        pageIndex: parsed.pageIndex || 0,
-        pageSize: parsed.pageSize || 10
+        pageIndex: +parsed.pageIndex || 0,
+        pageSize: +parsed.pageSize || 10
       },
       dataResult: { data: [], totalCount: 0 },
       apiError: "",
@@ -52,8 +52,13 @@ export default class Privileges extends BaseComponent {
     this.toggleEdit = this.toggleEdit.bind(this);
     this.handleInputChangeForEditModal = this.handleInputChangeForEditModal.bind(this);
     this.onPageNavClick = this.onPageNavClick.bind(this);
+    this.handleSubmitForEditModal = this.handleSubmitForEditModal.bind(this);
   }
 
+  /**
+   * This is called when any of the grid paging buttons is clicked.
+   * @param {*} pageIndex
+   */
   onPageNavClick(pageIndex) {
     const searchParams = this.state.searchParams;
     searchParams.pageIndex = pageIndex;
@@ -67,21 +72,15 @@ export default class Privileges extends BaseComponent {
   }
 
   render() {
-    const rows = this.state.dataResult.data.map((item, index) => {
-      return (
-        <tr key={index}>
-          <td>
-            {index + 1 + this.state.searchParams.pageIndex * this.state.searchParams.pageSize}
-          </td>
-          <td>{item.id}</td>
-          <td>
-            <a href="javascript:void();" onClick={() => this.toggleEdit(item.id)}>
-              {item.name}
-            </a>
-          </td>
-        </tr>
-      );
-    });
+    const rows = this.state.dataResult.data.map((item, index) => (
+      <Rows
+        index={index}
+        item={item}
+        onRowClick={this.toggleEdit}
+        pageIndex={this.state.searchParams.pageIndex}
+        pageSize={this.state.searchParams.pageSize}
+      />
+    ));
     return (
       <div className="animated fadeIn">
         <Row>
@@ -89,7 +88,12 @@ export default class Privileges extends BaseComponent {
             <Card>
               <CardHeader>
                 <i className="fa fa-align-justify" /> Privileges
-                <Button color="primary" onClick={this.toggle} className="mr-1 float-right">
+                <Button
+                  color="primary"
+                  onClick={this.toggle}
+                  className="mr-1 float-right"
+                  size="sm"
+                >
                   Add Privilege
                 </Button>
               </CardHeader>
@@ -102,7 +106,7 @@ export default class Privileges extends BaseComponent {
                   isOpen={this.state.editModal}
                   toggle={() => this.toggleEdit(this.state.editRecordId)}
                   editRecord={this.state.editRecord}
-                  onSubmit={async () => await this.handleSubmitForEditModal()}
+                  onSubmit={this.handleSubmitForEditModal}
                   onInputChange={this.handleInputChangeForEditModal}
                 />
                 <Table responsive striped size="sm">
@@ -131,12 +135,32 @@ export default class Privileges extends BaseComponent {
 
   fetchGridData() {
     new PrivilegeService()
-      .search(this.state.searchParams.pageIndex, this.state.searchParams.pageSize)
+      .getData(this.state.searchParams.pageIndex, this.state.searchParams.pageSize)
       .then(res => {
-        this.setState({ dataResult: res });
+        if (res.status) {
+          this.setState({ dataResult: res.data });
+        } else {
+          this.setState({
+            apiError: res.message,
+            showApiError: true,
+            dataResult: { data: [], totalCount: 0 }
+          });
+        }
+      })
+      .catch(err => {
+        this.setState({
+          apiError: err.message,
+          showApiError: true,
+          dataResult: { data: [], totalCount: 0 }
+        });
       });
   }
 
+  /**
+   * This governs what happens when input in the Edit modal changes. It's passed down via props.
+   * @param {*} field
+   * @param {*} value
+   */
   handleInputChangeForEditModal(field, value) {
     const editRecord = this.state.editRecord;
     editRecord[field] = value;
@@ -156,26 +180,35 @@ export default class Privileges extends BaseComponent {
     return isValid(this, errors, doAll, field);
   }
 
-  async handleSubmitForEditModal() {
+  /**
+   * This is called when the Edit modal is submitted.
+   */
+  handleSubmitForEditModal() {
     const isValid = this.validateFieldsForEditModal();
     if (isValid) {
-      const result = await new PrivilegeService().add(this.state.editRecord.name);
-      const editRecord = this.state.editRecord;
-      if (result.status) {
-        editRecord.apiError = "";
-        editRecord.showApiError = false;
-        this.setState(prevState => ({
-          editModal: !prevState.editModal
-        }));
-      } else {
-        editRecord.apiError = result.message;
-        editRecord.showApiError = true;
-      }
-      this.setState({ editRecord: editRecord });
+      new PrivilegeService().add(this.state.editRecord.name).then(result => {
+        const editRecord = this.state.editRecord;
+        if (result.status) {
+          editRecord.apiError = "";
+          editRecord.showApiError = false;
+          this.setState(prevState => ({
+            editModal: !prevState.editModal
+          }));
+        } else {
+          editRecord.apiError = result.message;
+          editRecord.showApiError = true;
+        }
+        this.setState({ editRecord: editRecord });
+      });
     }
   }
 
+  /**
+   * This pops up Edit modal when a grid row is clicked. It's called per record.
+   * @param { * } editRecordId
+   */
   toggleEdit(editRecordId) {
+    console.log("editRecordId = " + editRecordId);
     if (editRecordId <= 0 || this.state.editRecordId === editRecordId) {
       this.setState(prevState => ({
         editModal: !prevState.editModal
@@ -218,5 +251,27 @@ export default class Privileges extends BaseComponent {
     event.preventDefault();
 
     this.setState({ redirect: true });
+  }
+}
+
+class Rows extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+  render() {
+    const item = this.props.item;
+    const index = this.props.index;
+    return (
+      <tr key={index} onClick={this.handleClick}>
+        <td>{index + 1 + this.props.pageIndex * this.props.pageSize}</td>
+        <td>{item.id}</td>
+        <td>{item.name}</td>
+      </tr>
+    );
+  }
+
+  handleClick() {
+    this.props.onRowClick(this.props.item.id);
   }
 }

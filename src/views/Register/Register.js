@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import validator from "validator";
+import BaseComponent from "../BaseComponent";
 import { InputErrorInfo } from "../common";
 import { isValid } from "../common/utils";
+import { Redirect } from "react-router-dom";
 import {
   Button,
   Card,
@@ -9,6 +11,7 @@ import {
   CardFooter,
   Col,
   Container,
+  Form,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -16,10 +19,11 @@ import {
   Row
 } from "reactstrap";
 
-class Register extends Component {
+export default class Register extends BaseComponent {
   constructor() {
     super();
     this.state = {
+      redirect: false,
       email: "",
       username: "",
       password: "",
@@ -28,20 +32,12 @@ class Register extends Component {
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  handleInputChange(event) {
-    const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const field = target.name;
-    this.setState({ [field]: value }, () => {
-      this.validateFields(field);
-    });
-  }
-
-  handleSubmit() {
+  handleSubmit(event) {
+    event.preventDefault();
     if (this.validateFields()) {
+      this.setState({ redirect: true });
     }
   }
 
@@ -77,6 +73,9 @@ class Register extends Component {
   }
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect to="/login" />;
+    }
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -86,79 +85,84 @@ class Register extends Component {
                 <CardBody className="p-4">
                   <h1>Register</h1>
                   <p className="text-muted">Create your account</p>
-                  <InputGroup className="mb-3">
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText>
-                        <i className="icon-user" />
-                      </InputGroupText>
-                    </InputGroupAddon>
-                    <Input
-                      type="text"
-                      placeholder="Username"
-                      name="username"
-                      onChange={this.handleInputChange}
-                    />
-                    <InputErrorInfo
-                      input="username"
-                      info={this.state.errors.username}
-                      show={this.state.errors.username.length > 0}
-                    />
-                  </InputGroup>
-                  <InputGroup className="mb-3">
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText>@</InputGroupText>
-                    </InputGroupAddon>
-                    <Input
-                      type="email"
-                      placeholder="Email"
-                      name="email"
-                      onChange={this.handleInputChange}
-                    />
-                    <InputErrorInfo
-                      input="email"
-                      info={this.state.errors.email}
-                      show={this.state.errors.email.length > 0}
-                    />
-                  </InputGroup>
-                  <InputGroup className="mb-3">
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText>
-                        <i className="icon-lock" />
-                      </InputGroupText>
-                    </InputGroupAddon>
-                    <Input
-                      type="password"
-                      placeholder="Password"
-                      name="password"
-                      onChange={this.handleInputChange}
-                    />
-                    <InputErrorInfo
-                      input="password"
-                      info={this.state.errors.password}
-                      show={this.state.errors.password.length > 0}
-                    />
-                  </InputGroup>
-                  <InputGroup className="mb-4">
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText>
-                        <i className="icon-lock" />
-                      </InputGroupText>
-                    </InputGroupAddon>
-                    <Input
-                      type="password"
-                      placeholder="Repeat password"
-                      name="password2"
-                      onChange={this.handleInputChange}
-                    />
-                    <InputErrorInfo
-                      input="password2"
-                      info={this.state.errors.password2}
-                      show={this.state.errors.password2.length > 0}
-                    />
-                  </InputGroup>
-                  <Button color="success" block onClick={this.handleSubmit}>
-                    Create Account
-                  </Button>
+                  <form onSubmit={this.handleSubmit}>
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="icon-user" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="text"
+                        placeholder="Username"
+                        name="username"
+                        onChange={this.handleInputChange}
+                      />
+                      <InputErrorInfo
+                        input="username"
+                        info={this.state.errors.username}
+                        show={this.state.errors.username.length > 0}
+                      />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>@</InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="email"
+                        placeholder="Email"
+                        name="email"
+                        autoComplete="email"
+                        onChange={this.handleInputChange}
+                      />
+                      <InputErrorInfo
+                        input="email"
+                        info={this.state.errors.email}
+                        show={this.state.errors.email.length > 0}
+                      />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="icon-lock" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        autoComplete="new-password"
+                        onChange={this.handleInputChange}
+                      />
+                      <InputErrorInfo
+                        input="password"
+                        info={this.state.errors.password}
+                        show={this.state.errors.password.length > 0}
+                      />
+                    </InputGroup>
+                    <InputGroup className="mb-4">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="icon-lock" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="password"
+                        placeholder="Repeat password"
+                        name="password2"
+                        autoComplete="new-password"
+                        onChange={this.handleInputChange}
+                      />
+                      <InputErrorInfo
+                        input="password2"
+                        info={this.state.errors.password2}
+                        show={this.state.errors.password2.length > 0}
+                      />
+                    </InputGroup>
+                    <Button color="success" block type="submit">
+                      Create Account
+                    </Button>
+                  </form>
                 </CardBody>
                 <CardFooter className="p-4">
                   <Row>
@@ -182,5 +186,3 @@ class Register extends Component {
     );
   }
 }
-
-export default Register;
