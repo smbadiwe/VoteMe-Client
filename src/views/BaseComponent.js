@@ -23,9 +23,9 @@ export default class BaseComponent extends Component {
   }
 
   validateFields(name) {
-    console.log(
-      "Consider providing a validateFields(field) function in your class to handle input field validations."
-    );
+    // console.log(
+    //   "Consider providing a validateFields(field) function in your class to handle input field validations."
+    // );
     return true;
   }
 

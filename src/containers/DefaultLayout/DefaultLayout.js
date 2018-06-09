@@ -21,10 +21,14 @@ import routes from "../../routes";
 import DefaultAside from "./DefaultAside";
 import DefaultFooter from "./DefaultFooter";
 import DefaultHeader from "./DefaultHeader";
-import { ErrorBoundary } from "../../views/common";
+import { ErrorBoundary, PrivateRoute } from "../../views/common";
+import { isLoggedIn } from "../../views/common/AuthService";
 
 class DefaultLayout extends Component {
   render() {
+    if (!isLoggedIn()) {
+      return <Redirect to="/login" />;
+    }
     return (
       <div className="app">
         <AppHeader fixed>
@@ -45,13 +49,23 @@ class DefaultLayout extends Component {
                 <Switch>
                   {routes.map((route, idx) => {
                     return route.component ? (
-                      <Route
-                        key={idx}
-                        path={route.path}
-                        exact={route.exact}
-                        name={route.name}
-                        render={props => <route.component {...props} />}
-                      />
+                      route.allowAnonymous ? (
+                        <Route
+                          key={idx}
+                          path={route.path}
+                          exact={route.exact}
+                          name={route.name}
+                          component={route.component}
+                        />
+                      ) : (
+                        <PrivateRoute
+                          key={idx}
+                          path={route.path}
+                          exact={route.exact}
+                          name={route.name}
+                          component={route.component}
+                        />
+                      )
                     ) : null;
                   })}
                   <Redirect from="/" to="/dashboard" />

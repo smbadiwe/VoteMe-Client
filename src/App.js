@@ -16,24 +16,34 @@ import "./scss/style.css";
 // Containers
 import { DefaultLayout } from "./containers";
 // Pages
-import { Login, Page404, Page500, Register, ChangePassword } from "./views";
+import {
+  Login,
+  Page404,
+  Page500,
+  Register,
+  ChangePassword,
+  ResetPassword,
+  ResetPassword2
+} from "./views";
+import { PrivateRoute } from "./views/common";
 
 // import { renderRoutes } from 'react-router-config';
 
 const App = props => (
   <HashRouter>
     <Switch>
-      <Route exact path="/login" name="Login" component={Login} />
+      <Route path="/login" name="Login" component={Login} />
       <Route exact path="/register" name="Register" component={Register} />
+      <Route exact path="/resetpassword" name="Reset Password" component={ResetPassword} />
       <Route
         exact
-        path="/changepassword/:email?"
-        name="Change Password"
-        component={ChangePassword}
+        path="/resetpassword2/:token"
+        name="Reset Password 2"
+        component={ResetPassword2}
       />
       <Route exact path="/404" name="Page 404" component={Page404} />
       <Route exact path="/500" name="Page 500" component={Page500} />
-      <Route path="/" name="Home" component={DefaultLayout} />
+      <PrivateRoute path="/" name="Home" component={DefaultLayout} />
     </Switch>
   </HashRouter>
 );

@@ -16,7 +16,7 @@ import {
 import { Link, Redirect } from "react-router-dom";
 import BaseComponent from "../BaseComponent";
 import { AppSwitch } from "@coreui/react";
-import LoginService from "./Login.service";
+import * as authService from "../common/AuthService";
 
 class Login extends BaseComponent {
   constructor() {
@@ -36,12 +36,14 @@ class Login extends BaseComponent {
   async handleSubmit(event) {
     event.preventDefault();
 
-    const result = await new LoginService().authenticateUser(
+    const result = await authService.login(
       this.state.username,
       this.state.password,
       this.state.rememberme
     );
 
+    console.log("authService result");
+    console.log(result);
     if (result.status) {
       this.setState({ redirect: true });
     } else {
@@ -50,8 +52,8 @@ class Login extends BaseComponent {
   }
 
   render() {
-    if (this.state.redirect) {
-      return <Redirect push to="/dashboard" />;
+    if (this.state.redirect || authService.isLoggedIn()) {
+      return <Redirect to="/dashboard" />;
     }
     return (
       <div className="app flex-row align-items-center">
@@ -62,7 +64,6 @@ class Login extends BaseComponent {
                 <Card className="p-4">
                   <CardBody>
                     <h1>Login</h1>
-
                     <Alert color="danger" isOpen={this.state.showApiError}>
                       {this.state.apiError}
                     </Alert>

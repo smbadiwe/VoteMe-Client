@@ -16,21 +16,6 @@ const ChangePassword = Loadable({
   loading: Loading
 });
 
-const ResetPassword = Loadable({
-  loader: () => import("./views/ResetPassword"),
-  loading: Loading
-});
-
-const ResetPassword2 = Loadable({
-  loader: () => import("./views/ResetPassword/ResetPassword2"),
-  loading: Loading
-});
-
-const Register = Loadable({
-  loader: () => import("./views/Register"),
-  loading: Loading
-});
-
 const Privileges = Loadable({
   loader: () => import("./views/Admin/Privileges"),
   loading: Loading
@@ -56,20 +41,28 @@ const AddEditUserRole = Loadable({
   loading: Loading
 });
 
+// const routes: These are the routes that will be launched from inside the Layout (shell)
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  { path: "/", exact: true, name: "Home", component: DefaultLayout },
-  { path: "/dashboard", name: "Dashboard", component: Dashboard },
-  { path: "/register", name: "Register", component: Register },
-  { path: "/changepassword/:email?", name: "ChangePassword", component: ChangePassword },
-  { path: "/resetpassword", name: "ResetPassword", component: ResetPassword },
-  { path: "/resetpassword2/:token", name: "ResetPassword2", component: ResetPassword2 },
-
-  { path: "/admin/privileges", name: "Privileges", component: Privileges },
-  { path: "/admin/users", name: "Users", component: Users },
-  { path: "/admin/users/addedit/:id?", name: "AddEditUser", component: AddEditUser },
-  { path: "/admin/userroles", name: "UserRoles", component: UserRoles },
-  { path: "/admin/userroles/addedit/:id?", name: "AddEditUserRole", component: AddEditUserRole }
+  // { path: "/", exact: true, name: "Home", component: DefaultLayout, allowAnonymous: true },
+  {
+    id: 1,
+    path: "/changepassword",
+    exact: true,
+    name: "ChangePassword",
+    component: ChangePassword
+  },
+  { id: 2, path: "/dashboard", name: "Dashboard", component: Dashboard },
+  { id: 3, path: "/admin/privileges", name: "Privileges", component: Privileges },
+  { id: 4, path: "/admin/users", name: "Users", component: Users },
+  { id: 5, path: "/admin/users/addedit/:id?", name: "AddEditUser", component: AddEditUser },
+  { id: 6, path: "/admin/userroles", name: "UserRoles", component: UserRoles },
+  {
+    id: 7,
+    path: "/admin/userroles/addedit/:id?",
+    name: "AddEditUserRole",
+    component: AddEditUserRole
+  }
 ];
 
 export default routes;

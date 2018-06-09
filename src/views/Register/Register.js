@@ -1,17 +1,17 @@
-import React, { Component } from "react";
+import React from "react";
 import validator from "validator";
 import BaseComponent from "../BaseComponent";
 import { InputErrorInfo } from "../common";
 import { isValid } from "../common/utils";
 import { Redirect } from "react-router-dom";
 import {
+  Alert,
   Button,
   Card,
   CardBody,
   CardFooter,
   Col,
   Container,
-  Form,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -28,7 +28,9 @@ export default class Register extends BaseComponent {
       username: "",
       password: "",
       password2: "",
-      errors: { email: "", username: "", password: "", password2: "" }
+      errors: { email: "", username: "", password: "", password2: "" },
+      apiError: "",
+      showApiError: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,13 +39,14 @@ export default class Register extends BaseComponent {
   handleSubmit(event) {
     event.preventDefault();
     if (this.validateFields()) {
+      //TODO: Call server to register user
       this.setState({ redirect: true });
     }
   }
 
   validateFields(field) {
     const errors = this.state.errors;
-    let doAll = !field || field === "*";
+    const doAll = !field || field === "*";
 
     if (doAll || field === "email") {
       errors.email = "";
@@ -84,6 +87,9 @@ export default class Register extends BaseComponent {
               <Card className="mx-4">
                 <CardBody className="p-4">
                   <h1>Register</h1>
+                  <Alert color="danger" isOpen={this.state.showApiError}>
+                    {this.state.apiError}
+                  </Alert>
                   <p className="text-muted">Create your account</p>
                   <form onSubmit={this.handleSubmit}>
                     <InputGroup className="mb-3">
