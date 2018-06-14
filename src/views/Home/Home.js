@@ -1,5 +1,4 @@
 import React from "react";
-import BaseComponent from "../BaseComponent";
 // import {
 //   Badge,
 //   Button,
@@ -21,14 +20,12 @@ import BaseComponent from "../BaseComponent";
 //   Table
 // } from "reactstrap";
 
-class Dashboard extends BaseComponent {
-  constructor(props) {
-    super(props);
-  }
+export default class Home extends React.Component {
+  //   constructor(props) {
+  //     super(props);
+  //   }
 
   render() {
-    return <div>Dashboard</div>;
+    return <div>Home page</div>;
   }
 }
-
-export default Dashboard;

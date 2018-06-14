@@ -6,7 +6,7 @@ import BaseComponent from "../../BaseComponent";
 import validator from "validator";
 import { isValid } from "../../common/utils";
 import { GridPaging } from "../../common";
-import queryString from "query-string";
+import { queryString } from "../../index";
 import { Redirect } from "react-router-dom";
 
 import {

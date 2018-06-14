@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { setIdToken } from "./AuthService";
 export const isObjectEmpty = obj => {
   return Object.keys(obj).length === 0;
 };
@@ -20,25 +20,25 @@ export const getApiFullUrl = endpoint => {
   return process.env.REACT_APP_API_BASE_URL + endpoint;
 };
 
-export const apiError = msg => {
+export function apiError(msg) {
   if (!msg) msg = "Falure authenticating. Please try again later.";
   return {
     status: false,
     message: msg
   };
-};
+}
 
-export const apiSuccess = responseData => {
+export function apiSuccess(responseData) {
   if (responseData) {
     return {
       status: true,
-      data: responseData.data
+      data: responseData
     };
   }
   return {
     status: true
   };
-};
+}
 
 /**
  *
@@ -46,24 +46,34 @@ export const apiSuccess = responseData => {
  * @param {*} endpoint
  * @param {*} doPOST If true, request is HTTP POST; otherwise, GET
  */
-export const callApi = async (data, endpoint, doPOST = true) => {
+export async function callApi(data, endpoint, doPOST = true) {
   try {
     const response = doPOST
       ? await axios.post(getApiFullUrl(endpoint), data)
       : await axios.get(getApiFullUrl(endpoint), {
           params: data
         });
+    console.log("axios response: ");
+    console.log(response);
+    if (response.headers) {
+      const newToken = response.herders["x-sign"];
+      setIdToken(newToken);
+    }
     if (isSuccessStatus(response.status)) {
       return apiSuccess(response.data);
     }
-    return apiError(response.message);
+    return apiError(response.message || response.statusText);
   } catch (e) {
-    console.log(e);
-    return apiError(e.message);
+    if (e.response && e.response.headers) {
+      const newToken = e.response.herders["x-sign"];
+      setIdToken(newToken);
+    }
+    console.log(e.response);
+    return apiError(e.response.data);
   }
-};
+}
 
-export const isValid = (component, errors, doAll, field, updateState = true) => {
+export function isValid(component, errors, doAll, field, updateState = true) {
   if (updateState) {
     component.setState({ errors: errors });
   }
@@ -82,4 +92,4 @@ export const isValid = (component, errors, doAll, field, updateState = true) => 
     );
 
   return errors[field].length === 0;
-};
+}

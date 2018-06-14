@@ -25,10 +25,64 @@ import { ErrorBoundary, PrivateRoute } from "../../views/common";
 import { isLoggedIn } from "../../views/common/AuthService";
 
 class DefaultLayout extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  getNavRoutesForUser(allNavRoutes, componentsForUser) {
+    const userNavRoutes = [];
+
+    this.populateUserRoutes(allNavRoutes, userNavRoutes, componentsForUser);
+    return userNavRoutes;
+  }
+  populateUserRoutes(allNavRoutes, userNavRoutes, componentsForUser) {
+    for (const navRoute in allNavRoutes) {
+      if (navRoute.divider === true) continue;
+
+      if (navRoute.children && navRoute.children.length > 0) {
+        this.populateUserRoutes(navRoute.children, userNavRoutes, componentsForUser);
+      } else {
+        userNavRoutes.push(navRoute);
+      }
+    }
+  }
+  getRouteComponent(route, idx) {
+    if (!route || !route.component) return null;
+
+    if (route.allowAnonymous)
+      return (
+        <Route
+          key={idx}
+          path={route.path}
+          exact={route.exact}
+          name={route.name}
+          component={route.component}
+        />
+      );
+
+    return (
+      <PrivateRoute
+        key={idx}
+        path={route.path}
+        exact={route.exact}
+        name={route.name}
+        component={route.component}
+      />
+    );
+  }
+
   render() {
     if (!isLoggedIn()) {
-      return <Redirect to="/login" />;
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
+            state: { from: this.props.location }
+          }}
+        />
+      );
     }
+    const userNavs = this.getNavRoutesForUser(navigation);
     return (
       <div className="app">
         <AppHeader fixed>
@@ -38,7 +92,7 @@ class DefaultLayout extends Component {
           <AppSidebar fixed display="lg">
             <AppSidebarHeader />
             <AppSidebarForm />
-            <AppSidebarNav navConfig={navigation} {...this.props} />
+            <AppSidebarNav navConfig={userNavs} {...this.props} />
             <AppSidebarFooter />
             <AppSidebarMinimizer />
           </AppSidebar>
@@ -46,30 +100,7 @@ class DefaultLayout extends Component {
             <AppBreadcrumb appRoutes={routes} />
             <ErrorBoundary>
               <Container fluid>
-                <Switch>
-                  {routes.map((route, idx) => {
-                    return route.component ? (
-                      route.allowAnonymous ? (
-                        <Route
-                          key={idx}
-                          path={route.path}
-                          exact={route.exact}
-                          name={route.name}
-                          component={route.component}
-                        />
-                      ) : (
-                        <PrivateRoute
-                          key={idx}
-                          path={route.path}
-                          exact={route.exact}
-                          name={route.name}
-                          component={route.component}
-                        />
-                      )
-                    ) : null;
-                  })}
-                  <Redirect from="/" to="/dashboard" />
-                </Switch>
+                <Switch>{routes.map(this.getRouteComponent)}</Switch>
               </Container>
             </ErrorBoundary>
           </main>

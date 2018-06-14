@@ -15,7 +15,7 @@ import {
   Row
 } from "reactstrap";
 
-class ResetPassword extends BaseComponent {
+export default class ResetPassword extends BaseComponent {
   constructor() {
     super();
     this.state = {
@@ -71,5 +71,3 @@ class ResetPassword extends BaseComponent {
     );
   }
 }
-
-export default ResetPassword;

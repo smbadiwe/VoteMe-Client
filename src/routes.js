@@ -41,7 +41,8 @@ const AddEditUserRole = Loadable({
   loading: Loading
 });
 
-// const routes: These are the routes that will be launched from inside the Layout (shell)
+// const routes: These are the routes that will be launched from inside the Layout (shell).
+// CONVENTION: 'name' and 'component' keys must be the same string - letter for letter.
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   // { path: "/", exact: true, name: "Home", component: DefaultLayout, allowAnonymous: true },

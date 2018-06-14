@@ -4,6 +4,7 @@ import BaseComponent from "../BaseComponent";
 import { InputErrorInfo } from "../common";
 import { isValid } from "../common/utils";
 import { Redirect } from "react-router-dom";
+import RegisterService from "./Register.service";
 import {
   Alert,
   Button,
@@ -25,10 +26,19 @@ export default class Register extends BaseComponent {
     this.state = {
       redirect: false,
       email: "",
-      username: "",
+      firstname: "",
+      middlename: "",
+      lastname: "",
       password: "",
       password2: "",
-      errors: { email: "", username: "", password: "", password2: "" },
+      errors: {
+        email: "",
+        firstname: "",
+        middlename: "",
+        lastname: "",
+        password: "",
+        password2: ""
+      },
       apiError: "",
       showApiError: false
     };
@@ -36,11 +46,16 @@ export default class Register extends BaseComponent {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
     if (this.validateFields()) {
       //TODO: Call server to register user
-      this.setState({ redirect: true });
+      const { email, firstname, middlename, lastname, password } = this.state;
+      const userRegInfo = { email, firstname, middlename, lastname, password };
+      const response = await new RegisterService().registerUser(userRegInfo);
+      if (response.status) {
+        this.setState({ redirect: true });
+      }
     }
   }
 
@@ -54,9 +69,14 @@ export default class Register extends BaseComponent {
       else if (!validator.isEmail(this.state.email)) errors.email += "Invalid email address. ";
     }
 
-    if (doAll || field === "username") {
-      errors.username = "";
-      if (validator.isEmpty(this.state.username)) errors.username += "Username is required. ";
+    if (doAll || field === "firstname") {
+      errors.firstname = "";
+      if (validator.isEmpty(this.state.firstname)) errors.firstname += "First name is required. ";
+    }
+
+    if (doAll || field === "lastname") {
+      errors.lastname = "";
+      if (validator.isEmpty(this.state.lastname)) errors.lastname += "Surname is required. ";
     }
 
     if (doAll || field === "password") {
@@ -100,14 +120,52 @@ export default class Register extends BaseComponent {
                       </InputGroupAddon>
                       <Input
                         type="text"
-                        placeholder="Username"
-                        name="username"
+                        required={true}
+                        placeholder="First Name"
+                        name="firstname"
                         onChange={this.handleInputChange}
                       />
                       <InputErrorInfo
-                        input="username"
-                        info={this.state.errors.username}
-                        show={this.state.errors.username.length > 0}
+                        input="firstname"
+                        info={this.state.errors.firstname}
+                        show={this.state.errors.firstname.length > 0}
+                      />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="icon-user" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="text"
+                        placeholder="Middle Name"
+                        name="middlename"
+                        onChange={this.handleInputChange}
+                      />
+                      <InputErrorInfo
+                        input="middlename"
+                        info={this.state.errors.middlename}
+                        show={this.state.errors.middlename.length > 0}
+                      />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="icon-user" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="text"
+                        required={true}
+                        placeholder="Surname"
+                        name="lastname"
+                        onChange={this.handleInputChange}
+                      />
+                      <InputErrorInfo
+                        input="lastname"
+                        info={this.state.errors.lastname}
+                        show={this.state.errors.lastname.length > 0}
                       />
                     </InputGroup>
                     <InputGroup className="mb-3">
@@ -116,6 +174,7 @@ export default class Register extends BaseComponent {
                       </InputGroupAddon>
                       <Input
                         type="email"
+                        required={true}
                         placeholder="Email"
                         name="email"
                         autoComplete="email"
@@ -135,6 +194,7 @@ export default class Register extends BaseComponent {
                       </InputGroupAddon>
                       <Input
                         type="password"
+                        required={true}
                         placeholder="Password"
                         name="password"
                         autoComplete="new-password"
@@ -154,6 +214,7 @@ export default class Register extends BaseComponent {
                       </InputGroupAddon>
                       <Input
                         type="password"
+                        required={true}
                         placeholder="Repeat password"
                         name="password2"
                         autoComplete="new-password"
@@ -170,7 +231,7 @@ export default class Register extends BaseComponent {
                     </Button>
                   </form>
                 </CardBody>
-                <CardFooter className="p-4">
+                {/* <CardFooter className="p-4">
                   <Row>
                     <Col xs="12" sm="6">
                       <Button className="btn-facebook" block>
@@ -183,7 +244,7 @@ export default class Register extends BaseComponent {
                       </Button>
                     </Col>
                   </Row>
-                </CardFooter>
+                </CardFooter> */}
               </Card>
             </Col>
           </Row>

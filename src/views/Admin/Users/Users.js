@@ -2,7 +2,7 @@ import React from "react";
 import UsersService from "./Users.service";
 import BaseComponent from "../../BaseComponent";
 import { GridPaging } from "../../common";
-import queryString from "query-string";
+import { queryString } from "../../index";
 import { Link, Redirect } from "react-router-dom";
 import {
   Alert,

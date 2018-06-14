@@ -13,37 +13,37 @@ import "simple-line-icons/css/simple-line-icons.css";
 // Import Main styles for this application
 import "./scss/style.css";
 
-// Containers
-import { DefaultLayout } from "./containers";
 // Pages
 import {
   Login,
   Page404,
   Page500,
   Register,
-  ChangePassword,
+  VerifyUser,
   ResetPassword,
-  ResetPassword2
+  ResetPassword2,
+  Home
 } from "./views";
 import { PrivateRoute } from "./views/common";
-
-// import { renderRoutes } from 'react-router-config';
+import { DefaultLayout } from "./containers";
 
 const App = props => (
   <HashRouter>
     <Switch>
       <Route path="/login" name="Login" component={Login} />
       <Route exact path="/register" name="Register" component={Register} />
-      <Route exact path="/resetpassword" name="Reset Password" component={ResetPassword} />
+      <Route exact path="/verifyuser" name="Register" component={VerifyUser} />
+      <Route exact path="/resetpassword" name="ResetPassword" component={ResetPassword} />
       <Route
         exact
         path="/resetpassword2/:token"
         name="Reset Password 2"
         component={ResetPassword2}
       />
-      <Route exact path="/404" name="Page 404" component={Page404} />
-      <Route exact path="/500" name="Page 500" component={Page500} />
-      <PrivateRoute path="/" name="Home" component={DefaultLayout} />
+      <Route exact path="/404" name="Page404" component={Page404} />
+      <Route exact path="/500" name="Page500" component={Page500} />
+      <Route path="/" name="Home" component={Home} />
+      <PrivateRoute path="/dashboard" name="Dashboard" component={DefaultLayout} />
     </Switch>
   </HashRouter>
 );

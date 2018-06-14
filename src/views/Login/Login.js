@@ -42,8 +42,6 @@ class Login extends BaseComponent {
       this.state.rememberme
     );
 
-    console.log("authService result");
-    console.log(result);
     if (result.status) {
       this.setState({ redirect: true });
     } else {
@@ -53,6 +51,7 @@ class Login extends BaseComponent {
 
   render() {
     if (this.state.redirect || authService.isLoggedIn()) {
+      //TODO: pass in user info to the default layout
       return <Redirect to="/dashboard" />;
     }
     return (
